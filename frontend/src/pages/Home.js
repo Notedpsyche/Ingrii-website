@@ -5,6 +5,7 @@ import camIcon from "../assets/Vectorcamera.png";
 import containerImage from "../assets/Vectorupload.png";
 import "../App.css";
 import headerBg from "../assets/Vectorhead.png";
+import tabBg from "../assets/Vectorgrey.png";
 
 
 
@@ -63,7 +64,7 @@ function Home({ setImage, setResult }) {
   <nav style={{ display: "flex", gap: "20px" }}>
     <div
       style={{
-        backgroundImage: `url(${require("../assets/tabBg.png")})`,
+        backgroundImage: `url(${require(tabBg)})`,
         backgroundSize: "cover",
         padding: "8px 16px",
         borderRadius: "20px",
@@ -75,7 +76,7 @@ function Home({ setImage, setResult }) {
     </div>
     <div
       style={{
-        backgroundImage: `url(${require("../assets/tabBg.png")})`,
+        backgroundImage: `url(${require(tabBg)})`,
         backgroundSize: "cover",
         padding: "8px 16px",
         borderRadius: "20px",
@@ -87,7 +88,7 @@ function Home({ setImage, setResult }) {
     </div>
     <div
       style={{
-        backgroundImage: `url(${require("../assets/tabBg.png")})`,
+        backgroundImage: `url(${require(tabBg)})`,
         backgroundSize: "cover",
         padding: "8px 16px",
         borderRadius: "20px",
