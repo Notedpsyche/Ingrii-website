@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineUpload } from "react-icons/ai";
-
+import camIcon from "../assets/Vectorcamera.png";
 import "../App.css";
 
 function Home({ setImage, setResult }) {
@@ -51,10 +51,11 @@ function Home({ setImage, setResult }) {
       {/* Custom image button */}
       <label htmlFor="file-upload">
         <img
-          src={uploadIcon}
+          src={camIcon}
           alt="Upload"
           style={{ width: "50px", cursor: "pointer" }}
         />
+        <span className="emoji">📷</span>
       </label>
       {loading && <p className="loading">⏳ Processing...</p>}
     </div>

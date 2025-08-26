@@ -149,3 +149,27 @@ button:hover, a:hover {
     padding: 30px;
   }
 }
+
+.upload-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.upload-label {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+}
+
+.upload-icon {
+  width: 80px;
+  height: 80px;
+  display: block;
+}
+
+.emoji {
+  position: absolute;
+  top: 303px;       /* adjust to move it up/down */
+  right: 751px;     /* adjust to move it left/right */
+  font-size: 24px; /* size of emoji */
+}
