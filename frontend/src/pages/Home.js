@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineUpload } from "react-icons/ai";
+
 import "../App.css";
 
 function Home({ setImage, setResult }) {
@@ -39,7 +40,22 @@ function Home({ setImage, setResult }) {
         Welcome to Ingrii <AiOutlineUpload size={28} />
       </h1>
       <p>Upload an image and let Ingrii analyze it for you.</p>
-      <input type="file" accept="image/*" onChange={handleUpload} />
+       <input
+        type="file"
+        accept="image/*"
+        id="file-upload"
+        style={{ display: "none" }}
+        onChange={handleUpload}
+      />
+
+      {/* Custom image button */}
+      <label htmlFor="file-upload">
+        <img
+          src={uploadIcon}
+          alt="Upload"
+          style={{ width: "50px", cursor: "pointer" }}
+        />
+      </label>
       {loading && <p className="loading">⏳ Processing...</p>}
     </div>
   );
