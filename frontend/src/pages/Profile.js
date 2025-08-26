@@ -173,7 +173,7 @@ function Profile({ image, result }) {
           height: "470px",
           marginTop: "0px",
           position: "relative",
-          top: "-410px",
+          top: "-453px",
         }}
       >
         <div
