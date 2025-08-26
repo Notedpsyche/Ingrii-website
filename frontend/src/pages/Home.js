@@ -25,6 +25,21 @@ function Home({ setImage, setResult }) {
       });
       const data = await res.json();
       setResult(data);
+
+      // ✅ Save to recent searches
+      if (data.matched && data.matched.length > 0) {
+        let recent = JSON.parse(localStorage.getItem("recentSearches")) || [];
+        recent.unshift({
+          e_code: data.matched[0].e_code,
+          title: data.matched[0].title,
+          halal_status: data.matched[0].halal_status,
+          timestamp: new Date().toLocaleString(),
+        });
+        // keep only latest 10
+        recent = recent.slice(0, 10);
+        localStorage.setItem("recentSearches", JSON.stringify(recent));
+      }
+
       navigate("/result");
     } catch (err) {
       console.error(err);
@@ -37,8 +52,9 @@ function Home({ setImage, setResult }) {
   return (
     <div className="container">
       <h1>
-        Welcome to Ingrii <AiOutlineUpload size={28} />
+        Welcome to INGRII <AiOutlineUpload size={28} />
       </h1>
+<<<<<<< HEAD
       <p>Upload an image and let Ingrii analyze it for you.</p>
        <input
         type="file"
@@ -56,6 +72,10 @@ function Home({ setImage, setResult }) {
           style={{ width: "50px", cursor: "pointer" }}
         />
       </label>
+=======
+      <p>Upload an image and let INGRII analyze it for you.</p>
+      <input type="file" accept="image/*" onChange={handleUpload} />
+>>>>>>> bff960f (added chatbot)
       {loading && <p className="loading">⏳ Processing...</p>}
     </div>
   );
