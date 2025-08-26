@@ -1,25 +1,40 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { AiOutlineUpload } from "react-icons/ai";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { AiOutlineHome, AiOutlineInfoCircle, AiOutlineUpload } from "react-icons/ai";
+import React, { useState } from "react";
+import "../App.css";
+
 import camIcon from "../assets/Groupcamsss.png";
 import fileIcon from "../assets/Groupfiless.png";
-import containerImage from "../assets/Vectorupload.png";
-import "../App.css";
+import containerImage from "../assets/Groupprofile.png";
 import headerBg from "../assets/Vectorhead.png";
 import tabBg from "../assets/Vectorgrey.png";
-import tabBgHighlight from "../assets/Vectorred.png";
+import tabBgHighlight from "../assets/Vectorred.png"; // highlighted tab image
 import searchBg from "../assets/Vectorsearcch.png";
 import aiBox from "../assets/Vectorbox.png";
 import aiChat from "../assets/Vectortype.png";
 import aiChatBot from "../assets/Vectorchat.png";
-import manualSearch from "../assets/Vectormanual.png";
 
-function Home({ setImage, setResult }) {
+function Profile({ image, result }) {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Detect active tab based on URL
+  const getActiveIndex = () => {
+    switch (location.pathname) {
+      case "/":
+        return 0;
+      case "/result":
+        return 1;
+      case "/profile":
+        return 2;
+      default:
+        return 0;
+    }
+  };
+
   const [loading, setLoading] = useState(false);
   const [hovered, setHovered] = useState(null);
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(getActiveIndex()); // Default: Profile when URL is /profile
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -27,35 +42,21 @@ function Home({ setImage, setResult }) {
     { name: "Profile", path: "/profile" },
   ];
 
-  // Sync active tab with the current URL
-  useEffect(() => {
-    const currentIndex = navItems.findIndex((item) => item.path === location.pathname);
-    if (currentIndex !== -1) {
-      setActiveTab(currentIndex);
-    }
-  }, [location.pathname]);
+  const highlightText = () => {
+    if (!result || !result.matched || result.matched.length === 0)
+      return result?.extracted || "";
 
-  const handleUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setLoading(true);
-    setImage(URL.createObjectURL(file));
-    const formData = new FormData();
-    formData.append("image", file);
-    try {
-      const res = await fetch("http://localhost:5000/upload", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
-      setResult(data);
-      navigate("/result");
-    } catch (err) {
-      console.error(err);
-      setResult({ success: false, extracted: "", matched: [] });
-      navigate("/result");
-    }
-    setLoading(false);
+    let highlighted = result.extracted;
+    const codes = result.matched
+      .map((item) => item.e_code)
+      .sort((a, b) => b.length - a.length);
+
+    codes.forEach((code) => {
+      const regex = new RegExp(`(${code})`, "g");
+      highlighted = highlighted.replace(regex, `<span class="highlight">$1</span>`);
+    });
+
+    return highlighted;
   };
 
   return (
@@ -78,6 +79,7 @@ function Home({ setImage, setResult }) {
           overflow: "hidden",
         }}
       >
+        {/* Left Logo */}
         <div
           style={{
             color: "#fff",
@@ -90,6 +92,7 @@ function Home({ setImage, setResult }) {
           INGRII
         </div>
 
+        {/* Tabs */}
         <nav style={{ display: "flex", gap: "20px", marginRight: "350px" }}>
           {navItems.map((item, index) => {
             const isActive = activeTab === index;
@@ -121,6 +124,7 @@ function Home({ setImage, setResult }) {
           })}
         </nav>
 
+        {/* Search */}
         <input
           type="text"
           placeholder="🔍 Search..."
@@ -144,79 +148,19 @@ function Home({ setImage, setResult }) {
       </header>
 
       <div
-        className="container" 
+        className="containerRes"
         style={{
           backgroundImage: `url(${containerImage})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           border: "2px solid #1F1F22",
           borderRadius: "20px",
-          height: 267,
+          position: "relative",
+          transform: "scale(0.9)",
+          height: "900px",
+          top: "50px",
         }}
-      >
-        <h1 style={{ textAlign: "left", fontSize: 25 }}>
-          Scan ingredients from a label <AiOutlineUpload size={28} />
-        </h1>
-        <p style={{ textAlign: "left" }}>Upload through either file or camera</p>
-
-        <input
-          type="file"
-          accept="image/*"
-          id="file-upload"
-          style={{ display: "none" }}
-          onChange={handleUpload}
-        />
-
-        <input
-          type="text"
-          placeholder="Type to manually search.."
-          style={{
-            position: "relative",
-            backgroundColor: "transparent",
-            backgroundImage: `url(${manualSearch})`,
-            backgroundSize: "contain",
-            backgroundRepeat: "no-repeat",
-            color: "#fff",
-            border: "none",
-            top: "-100px",
-            left: "-180px",
-            borderRadius: "20px",
-            padding: "10px 16px",
-            outline: "none",
-            width: "400px",
-            height: "42px",
-            boxSizing: "border-box",
-            overflow: "hidden",
-          }}
-        />
-
-        {/* Camera Upload Button */}
-        <div className="upload-wrapper">
-          <input
-            type="file"
-            id="file-upload-cam"
-            style={{ display: "none" }}
-            onChange={() => {}}
-          />
-          <label htmlFor="file-upload-cam" className="upload-label">
-            <img src={camIcon} alt="Upload via cam" className="upload-icon" />
-          </label>
-          {loading && <p>⏳ Processing...</p>}
-        </div>
-
-        {/* File Upload Button */}
-        <div>
-          <input
-            type="file"
-            id="file-upload-file"
-            style={{ display: "none" }}
-            onChange={() => {}}
-          />
-          <label htmlFor="file-upload-file" className="upload-file-label">
-            <img src={fileIcon} alt="Upload files" className="upload-icon" />
-          </label>
-        </div>
-      </div>
+      ></div>
 
       <div
         className="ai_container"
@@ -229,7 +173,7 @@ function Home({ setImage, setResult }) {
           height: "470px",
           marginTop: "0px",
           position: "relative",
-          top: "-450px",
+          top: "-410px",
         }}
       >
         <div
@@ -265,6 +209,7 @@ function Home({ setImage, setResult }) {
             }}
           />
         </div>
+
         <div
           className="ai_chat"
           style={{
@@ -295,4 +240,4 @@ function Home({ setImage, setResult }) {
   );
 }
 
-export default Home;
+export default Profile;

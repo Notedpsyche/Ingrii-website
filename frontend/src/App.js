@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Result from "./pages/Result";
+import Profile from "./pages/Profile";
 import "./App.css";
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home setImage={setImage} setResult={setResult} />} />
           <Route path="/result" element={<Result image={image} result={result} />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </Router>
   );
