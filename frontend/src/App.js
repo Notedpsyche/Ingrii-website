@@ -10,14 +10,12 @@ function App() {
 
   return (
     <Router>
-      <header>  
-        INGRII
-      </header>
-      <Routes>
-        <Route path="/" element={<Home setImage={setImage} setResult={setResult} />} />
-        <Route path="/result" element={<Result image={image} result={result} />} />
-      </Routes>
-    </Router>
+        
+        <Routes>
+          <Route path="/" element={<Home setImage={setImage} setResult={setResult} />} />
+          <Route path="/result" element={<Result image={image} result={result} />} />
+        </Routes>
+      </Router>
   );
 }
 

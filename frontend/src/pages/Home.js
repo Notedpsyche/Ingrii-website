@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineUpload } from "react-icons/ai";
 import camIcon from "../assets/Vectorcamera.png";
+import containerImage from "../assets/Vectorupload.png";
 import "../App.css";
+import headerBg from "../assets/Vectorhead.png";
+
+
+
 
 function Home({ setImage, setResult }) {
   const navigate = useNavigate();
@@ -35,7 +40,86 @@ function Home({ setImage, setResult }) {
   };
 
   return (
-    <div className="container">
+    <>
+    <header
+  style={{
+    backgroundImage: `url(${headerBg})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    height: "60px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "0 40px",
+    boxSizing: "border-box",
+  }}
+>
+  {/* Left Logo */}
+  <div style={{ color: "#fff", fontSize: "20px", fontWeight: "bold" }}>
+    INGRII
+  </div>
+
+  {/* Tabs */}
+  <nav style={{ display: "flex", gap: "20px" }}>
+    <div
+      style={{
+        backgroundImage: `url(${require("../assets/tabBg.png")})`,
+        backgroundSize: "cover",
+        padding: "8px 16px",
+        borderRadius: "20px",
+        color: "#fff",
+        cursor: "pointer",
+      }}
+    >
+      Home
+    </div>
+    <div
+      style={{
+        backgroundImage: `url(${require("../assets/tabBg.png")})`,
+        backgroundSize: "cover",
+        padding: "8px 16px",
+        borderRadius: "20px",
+        color: "#fff",
+        cursor: "pointer",
+      }}
+    >
+      Results
+    </div>
+    <div
+      style={{
+        backgroundImage: `url(${require("../assets/tabBg.png")})`,
+        backgroundSize: "cover",
+        padding: "8px 16px",
+        borderRadius: "20px",
+        color: "#fff",
+        cursor: "pointer",
+      }}
+    >
+      Profile
+    </div>
+  </nav>
+
+  {/* Search */}
+  <input
+    type="text"
+    placeholder="Search..."
+    style={{
+      border: "none",
+      padding: "6px 12px",
+      borderRadius: "20px",
+      outline: "none",
+      width: "200px",
+    }}
+  />
+</header>
+
+    <div className="container"
+      style={{
+        backgroundImage: `url(${containerImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }} >
+      
       <h1>
         Welcome to Ingrii <AiOutlineUpload size={28} />
       </h1>
@@ -49,16 +133,26 @@ function Home({ setImage, setResult }) {
       />
 
       {/* Custom image button */}
-      <label htmlFor="file-upload">
-        <img
-          src={camIcon}
-          alt="Upload"
-          style={{ width: "50px", cursor: "pointer" }}
+        <div className="upload-wrapper">
+        {/* Hidden file input */}
+        <input
+          type="file"
+          id="file-upload"
+          style={{ display: "none" }}
+          onChange={() => {}}
         />
-        <span className="emoji">📷</span>
-      </label>
-      {loading && <p className="loading">⏳ Processing...</p>}
+
+        {/* Label acts like a button */}
+        <label htmlFor="file-upload" className="upload-label">
+          <img src={camIcon} alt="Upload" className="upload-icon" />
+          <span className="emoji">📷</span>
+        </label>
+
+        {loading && <p>⏳ Processing...</p>}
+      </div>
+
     </div>
+    </>
   );
 }
 
