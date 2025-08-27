@@ -48,7 +48,7 @@ function Home({ setImage, setResult }) {
     const formData = new FormData();
     formData.append("image", file);
     try {
-      const res = await fetch("http://172.16.98.73:5000/upload", {
+      const res = await fetch("http://localhost:5000/upload", {
         method: "POST",
         body: formData,
       });
