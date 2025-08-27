@@ -21,6 +21,10 @@ function Home({ setImage, setResult }) {
   const [hovered, setHovered] = useState(null);
   const [activeTab, setActiveTab] = useState(0);
 
+  // NEW: local state for both search inputs
+  const [headerSearch, setHeaderSearch] = useState("");
+  const [manualSearchQuery, setManualSearchQuery] = useState("");
+
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Results", path: "/result" },
@@ -35,31 +39,91 @@ function Home({ setImage, setResult }) {
     }
   }, [location.pathname]);
 
+  // Upload handler (used by both camera + file)
   const handleUpload = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files && e.target.files[0];
     if (!file) return;
     setLoading(true);
     setImage(URL.createObjectURL(file));
     const formData = new FormData();
     formData.append("image", file);
     try {
-      const res = await fetch("http://localhost:5000/upload", {
+      const res = await fetch("http://172.16.98.73:5000/upload", {
         method: "POST",
         body: formData,
       });
       const data = await res.json();
       setResult(data);
-      navigate("/result");
+      navigate("/result", { state: { image: URL.createObjectURL(file), result: data } });
     } catch (err) {
       console.error(err);
       setResult({ success: false, extracted: "", matched: [] });
-      navigate("/result");
+      navigate("/result", {
+        state: {
+          image: URL.createObjectURL(file),
+          result: { success: false, extracted: "", matched: [] },
+        },
+      });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  // Search submit (used by header search + manual search)
+  const submitSearch = async (query) => {
+    const q = (query || "").trim();
+    if (!q) return;
+    setLoading(true);
+    try {
+      const res = await fetch("http://localhost:5000/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: q }),
+      });
+      const data = await res.json();
+      setResult(data);
+      navigate("/result", { state: { image: null, result: data } });
+    } catch (err) {
+      console.error(err);
+      const fallback = { success: false, extracted: q, matched: [] };
+      setResult(fallback);
+      navigate("/result", { state: { image: null, result: fallback } });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
+      {/* Fixed full-screen loading overlay (inline styles so it won't affect layout) */}
+      {loading && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.6)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999,
+          }}
+        >
+          <div
+            style={{
+              background: "rgba(32,32,36,0.9)",
+              padding: "16px 20px",
+              borderRadius: "12px",
+              border: "2px solid #1F1F22",
+              color: "#fff",
+              fontWeight: "bold",
+              letterSpacing: "0.3px",
+            }}
+          >
+            ⏳ Processing...
+          </div>
+        </div>
+      )}
+
       <header
         style={{
           backgroundImage: `url(${headerBg})`,
@@ -121,9 +185,13 @@ function Home({ setImage, setResult }) {
           })}
         </nav>
 
+        {/* Header search wired to backend on Enter */}
         <input
           type="text"
           placeholder="🔍 Search..."
+          value={headerSearch}
+          onChange={(e) => setHeaderSearch(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && submitSearch(headerSearch)}
           style={{
             backgroundColor: "transparent",
             backgroundImage: `url(${searchBg})`,
@@ -159,6 +227,7 @@ function Home({ setImage, setResult }) {
         </h1>
         <p style={{ textAlign: "left" }}>Upload through either file or camera</p>
 
+        {/* Hidden file input (kept) */}
         <input
           type="file"
           accept="image/*"
@@ -167,9 +236,13 @@ function Home({ setImage, setResult }) {
           onChange={handleUpload}
         />
 
+        {/* Manual search input wired to backend on Enter */}
         <input
           type="text"
           placeholder="Type to manually search.."
+          value={manualSearchQuery}
+          onChange={(e) => setManualSearchQuery(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && submitSearch(manualSearchQuery)}
           style={{
             position: "relative",
             backgroundColor: "transparent",
@@ -190,18 +263,19 @@ function Home({ setImage, setResult }) {
           }}
         />
 
-        {/* Camera Upload Button */}
+        {/* Camera Upload Button (uses device camera on mobile) */}
         <div className="upload-wrapper">
           <input
             type="file"
             id="file-upload-cam"
+            accept="image/*"
+            capture="environment"
             style={{ display: "none" }}
-            onChange={() => {}}
+            onChange={handleUpload}
           />
           <label htmlFor="file-upload-cam" className="upload-label">
             <img src={camIcon} alt="Upload via cam" className="upload-icon" />
           </label>
-          {loading && <p>⏳ Processing...</p>}
         </div>
 
         {/* File Upload Button */}
@@ -209,8 +283,9 @@ function Home({ setImage, setResult }) {
           <input
             type="file"
             id="file-upload-file"
+            accept="image/*"
             style={{ display: "none" }}
-            onChange={() => {}}
+            onChange={handleUpload}
           />
           <label htmlFor="file-upload-file" className="upload-file-label">
             <img src={fileIcon} alt="Upload files" className="upload-icon" />

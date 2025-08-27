@@ -46,6 +46,7 @@ function Result({ image, result }) {
 
   return (
     <>
+      {/* Fixed Header */}
       <header
         style={{
           backgroundImage: `url(${headerBg})`,
@@ -62,6 +63,11 @@ function Result({ image, result }) {
           padding: "0 25px",
           boxSizing: "border-box",
           overflow: "hidden",
+          position: "fixed", // <-- Fixed at top
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
         }}
       >
         {/* Left Logo */}
@@ -132,138 +138,147 @@ function Result({ image, result }) {
         />
       </header>
 
-        <div 
-          className="containerRes"
+      {/* Scrollable Body */}
+      <div
+        style={{
+          marginTop: "110px", // leave space for fixed header
+          padding: "20px",
+          overflowY: "auto",
+          height: "calc(100vh - 110px)", // full height minus header
+          paddingBottom: "60px", // <-- extra footer space
+        }}
+      >
+        {/* Flex container for Results + Chatbot */}
+        <div
           style={{
-            backgroundImage: `url(${containerImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            border: "2px solid #1F1F22",
-            borderRadius: "20px",
-            minHeight: "267px", 
-            height: "auto",
-            padding: "20px" // optional for spacing
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "30px",
           }}
         >
-
-        <h1 style={{fontStyle:"Italic"}}>Results</h1>
-        {image && <img src={image} alt="Uploaded" className="uploaded-image" />}
-        {result ? (
-          <>
-            <div
-              className="result-box"
-              dangerouslySetInnerHTML={{ __html: highlightText() }}
-            />
-            {result.matched.length > 0 ? (
-              result.matched.map((item, index) => (
-                <div className="result-box card" key={index}>
-                  <h3>
-                    <AiOutlineInfoCircle /> {item.title}
-                  </h3>
-                  <p>
-                    <strong>E-Code:</strong> {item.e_code}
-                  </p>
-                  <p>
-                    <strong>Info:</strong> {item.info}
-                  </p>
-                  <p>
-                    <strong>Type:</strong> {item.e_type}
-                  </p>
-                  <p>
-                    <strong>Halal Status:</strong> {item.halal_status}
-                  </p>
-                  <p>
-                    <strong>Risk Factor:</strong> {item.risk_factor}
-                  </p>
-                  <p>
-                    <strong>Countries Banned:</strong> {item.countries_banned}
-                  </p>
-                </div>
-              ))
+          {/* Results Section */}
+          <div style={{ flex: 1 }}>
+            <h1 style={{ fontStyle: "Italic" }}>Results</h1>
+            {image && <img src={image} alt="Uploaded" className="uploaded-image" />}
+            {result ? (
+              <>
+                <div
+                  className="result-box"
+                  dangerouslySetInnerHTML={{ __html: highlightText() }}
+                />
+                {result.matched.length > 0 ? (
+                  result.matched.map((item, index) => (
+                    <div className="result-box card" key={index}>
+                      <h3>
+                        <AiOutlineInfoCircle /> {item.title}
+                      </h3>
+                      <p>
+                        <strong>E-Code:</strong> {item.e_code}
+                      </p>
+                      <p>
+                        <strong>Info:</strong> {item.info}
+                      </p>
+                      <p>
+                        <strong>Type:</strong> {item.e_type}
+                      </p>
+                      <p>
+                        <strong>Halal Status:</strong> {item.halal_status}
+                      </p>
+                      <p>
+                        <strong>Risk Factor:</strong> {item.risk_factor}
+                      </p>
+                      <p>
+                        <strong>Countries Banned:</strong> {item.countries_banned}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="result-box">❌ No match found</p>
+                )}
+              </>
             ) : (
-              <p className="result-box">❌ No match found</p>
+              <p className="result-box">⚠ No result available</p>
             )}
+          </div>
 
-            
-          </>
-        ) : (
-          <p className="result-box">⚠ No result available</p>
-        )}
-      </div>
-        <div
-                className="ai_container"
+          {/* AI Chatbot Section */}
+          <div
+            className="ai_container"
+            style={{
+              border: "2px solid #1F1F22",
+              borderRadius: "25px",
+              backgroundImage: `url(${aiBox})`,
+              backgroundSize: "cover",
+              width: "250px",
+              height: "470px",
+              marginTop: "0px",
+              position: "relative",
+              flexShrink: 0,
+            }}
+          >
+            <div
+              className="ai_chatBot"
+              style={{
+                border: "2px solid #1F1F22",
+                borderRadius: "10px",
+                backgroundImage: `url(${aiChat})`,
+                backgroundSize: "cover",
+                width: "247px",
+                height: "400px",
+                marginTop: "0px",
+                position: "relative",
+                top: "80px",
+              }}
+            >
+              <textarea
+                placeholder="Get your doubts cleared!"
                 style={{
-                  border: "2px solid #1F1F22",
-                  borderRadius: "25px",
-                  backgroundImage: `url(${aiBox})`,
-                  backgroundSize: "cover",
-                  width: "250px",
-                  height: "470px",
-                  marginTop: "0px",
+                  backgroundColor: "transparent",
+                  color: "#fff",
+                  border: "none",
+                  padding: "12px",
+                  borderRadius: "10px",
+                  outline: "none",
+                  width: "100%",
+                  height: "100px",
+                  boxSizing: "border-box",
+                  resize: "none",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "pre-wrap",
+                }}
+              />
+            </div>
+            <div
+              className="ai_chat"
+              style={{
+                border: "2px solid #1F1F22",
+                borderRadius: "10px",
+                backgroundImage: `url(${aiChatBot})`,
+                backgroundSize: "cover",
+                width: "247px",
+                height: "70px",
+                marginTop: "0px",
+                position: "relative",
+                top: "-417px",
+                left: "0px",
+              }}
+            >
+              <span
+                style={{
                   position: "relative",
-                  top: "-410px",
+                  top: "7px",
+                  fontWeight: "bold",
                 }}
               >
-                <div
-                  className="ai_chatBot"
-                  style={{
-                    border: "2px solid #1F1F22",
-                    borderRadius: "10px",
-                    backgroundImage: `url(${aiChat})`,
-                    backgroundSize: "cover",
-                    width: "247px",
-                    height: "400px",
-                    marginTop: "0px",
-                    position: "relative",
-                    top: "80px",
-                  }}
-                >
-                  <textarea
-                    placeholder="Get your doubts cleared!"
-                    style={{
-                      backgroundColor: "transparent",
-                      color: "#fff",
-                      border: "none",
-                      padding: "12px",
-                      borderRadius: "10px",
-                      outline: "none",
-                      width: "100%",
-                      height: "100px",
-                      boxSizing: "border-box",
-                      resize: "none",
-                      overflowWrap: "break-word",
-                      wordBreak: "break-word",
-                      whiteSpace: "pre-wrap",
-                    }}
-                  />
-                </div>
-                <div
-                  className="ai_chat"
-                  style={{
-                    border: "2px solid #1F1F22",
-                    borderRadius: "10px",
-                    backgroundImage: `url(${aiChatBot})`,
-                    backgroundSize: "cover",
-                    width: "247px",
-                    height: "70px",
-                    marginTop: "0px",
-                    position: "relative",
-                    top: "-417px",
-                    left: "0px",
-                  }}
-                >
-                  <span
-                    style={{
-                      position: "relative",
-                      top: "7px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    <p>AI CHATBOT</p>
-                  </span>
-                </div>
-              </div>  
-
+                <p>AI CHATBOT</p>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div style={{ height: "80px" }}></div>
+      </div>
+      
     </>
   );
 }
